@@ -1,0 +1,10 @@
+<div class="container">
+  <h3>Nuevo Registro</h3>
+  <input [(ngModel)]="person.nombre" placeholder="Nombre" class="form-control mb-2">
+  <input [(ngModel)]="person.apellido" placeholder="Apellido" class="form-control mb-2">
+  <input [(ngModel)]="person.fechaNacimiento" type="date" class="form-control mb-2">
+  <input [(ngModel)]="person.puesto" placeholder="Puesto" class="form-control mb-2">
+  <input [(ngModel)]="person.sueldo" type="number" placeholder="Sueldo" class="form-control mb-2">
+  
+  <button (click)="save()" class="btn btn-success">Guardar</button>
+</div>
