@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { PersonService } from '../../services/person.service';
@@ -13,13 +13,19 @@ import { PersonService } from '../../services/person.service';
 export class PersonListComponent implements OnInit {
   people: any[] = [];
 
-  constructor(private personService: PersonService, private router: Router) {}
+  constructor(private personService: PersonService, private router: Router, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() { this.load(); }
 
   load() {
-    this.personService.getPeople().subscribe(res => this.people = res.data);
-  }
+  this.personService.getPeople().subscribe({
+    next: (res) => {
+      this.people = [...res.data];
+      this.cdr.detectChanges()
+    },
+    error: (err) => console.error("Error cargando lista", err)
+  });
+}
 
   delete(id: number) {
     if(confirm('¿Seguro?')) {

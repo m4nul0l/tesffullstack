@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -14,8 +14,9 @@ import { PersonService } from '../../services/person.service';
 export class PersonFormComponent implements OnInit {
   idToEdit: number | null = null;
   isEdit = false;
-  
-  person = {
+
+  person: any = {
+    id: null,
     nombre: '',
     apellido: '',
     fechaNacimiento: '',
@@ -26,8 +27,9 @@ export class PersonFormComponent implements OnInit {
   constructor(
     private personService: PersonService,
     private router: Router,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
     const id = this.route.snapshot.params['id'];
@@ -36,11 +38,12 @@ export class PersonFormComponent implements OnInit {
       this.idToEdit = Number(id);
       this.personService.getPersonById(this.idToEdit).subscribe({
         next: (res) => {
-          if (res.status) {
+          if (res.status && res.data) {
             this.person = res.data;
-            if (this.person.fechaNacimiento) {
-              this.person.fechaNacimiento = this.person.fechaNacimiento.split('T')[0];
-            }
+              if (this.person.fechaNacimiento) {
+                this.person.fechaNacimiento = this.person.fechaNacimiento.split('T')[0];
+              }
+              this.cdr.detectChanges()
           }
         },
         error: (err) => console.error('Error al cargar persona', err)
@@ -50,13 +53,15 @@ export class PersonFormComponent implements OnInit {
 
   onSave() {
     const action = this.isEdit && this.idToEdit !== null
-      ? this.personService.updatePerson(this.idToEdit, this.person) 
+      ? this.personService.updatePerson(this.idToEdit, this.person)
       : this.personService.createPerson(this.person);
 
     action.subscribe({
       next: (res) => {
         alert(res.msg || "Operación realizada con éxito");
-        this.router.navigate(['/']);
+        this.router.navigate(['/']).then(() => {
+          window.location.reload();
+        });
       },
       error: (err) => {
         console.error('Error en la operación', err);
@@ -65,7 +70,7 @@ export class PersonFormComponent implements OnInit {
     });
   }
 
-  cancel() { 
-    this.router.navigate(['/']); 
+  cancel() {
+    this.router.navigate(['/']);
   }
 }
