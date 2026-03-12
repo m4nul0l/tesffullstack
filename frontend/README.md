@@ -32,3 +32,12 @@ Listado: Visualización de todos los registros con opciones de edición y borrad
 
 Formulario: Registro y edición de personas con validación de datos.
 
+## Capturas de Pantalla
+
+/screenshots/lista-personas.png
+/screenshots/creacion-persona.png
+/screenshots/lista-personas-actualizada.png
+/screenshots/edicion-persona.png
+/screenshots/lista-personas-editada.png
+/screenshots/borrar-persona.png
+
