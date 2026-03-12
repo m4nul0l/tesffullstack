@@ -17,7 +17,7 @@ import com.examen.backend.repository.PersonRepository;
 
 @RestController
 @RequestMapping("/api/person")
-@CrossOrigin(origins = "*") 
+@CrossOrigin(origins = "http://localhost:4200")
 public class PersonController {
 
     @Autowired
@@ -31,8 +31,8 @@ public class PersonController {
     @GetMapping("/{id}")
     public ResponseDTO getById(@PathVariable Integer id) {
         return repo.findById(id)
-            .map(person -> new ResponseDTO(true, "Ok", person))
-            .orElse(new ResponseDTO(false, "No se encontró la persona", null));
+                .map(p -> new ResponseDTO(true, "Ok", p))
+                .orElse(new ResponseDTO(false, "No encontrado", null));
     }
 
     @PostMapping
@@ -42,16 +42,15 @@ public class PersonController {
 
     @PutMapping("/{id}")
     public ResponseDTO update(@PathVariable Integer id, @RequestBody Person p) {
-        return repo.findById(id)
-            .map(person -> {
-                person.setNombre(p.getNombre());
-                person.setApellido(p.getApellido());
-                person.setFechaNacimiento(p.getFechaNacimiento());
-                person.setPuesto(p.getPuesto());
-                person.setSueldo(p.getSueldo());
-                return new ResponseDTO(true, "Actualizado correctamente", repo.save(person));
-            })
-            .orElse(new ResponseDTO(false, "Error: Usuario no encontrado", null));
+
+        return repo.findById(id).map(existente -> {
+            existente.setNombre(p.getNombre());
+            existente.setApellido(p.getApellido());
+            existente.setFechaNacimiento(p.getFechaNacimiento());
+            existente.setPuesto(p.getPuesto());
+            existente.setSueldo(p.getSueldo());
+            return new ResponseDTO(true, "Actualizado", repo.save(existente));
+        }).orElse(new ResponseDTO(false, "No existe", null));
     }
 
     @DeleteMapping("/{id}")
